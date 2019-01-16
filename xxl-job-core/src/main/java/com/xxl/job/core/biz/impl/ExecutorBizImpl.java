@@ -1,5 +1,6 @@
 package com.xxl.job.core.biz.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.LogResult;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -21,6 +22,7 @@ import java.util.Date;
 /**
  * Created by xuxueli on 17/3/1.
  */
+@Service
 public class ExecutorBizImpl implements ExecutorBiz {
     private static Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
 

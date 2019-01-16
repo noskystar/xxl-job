@@ -58,13 +58,11 @@ public class TriggerCallbackThread {
 
             @Override
             public void run() {
-
                 // normal callback
                 while(!toStop){
                     try {
                         HandleCallbackParam callback = getInstance().callBackQueue.take();
                         if (callback != null) {
-
                             // callback list param
                             List<HandleCallbackParam> callbackParamList = new ArrayList<HandleCallbackParam>();
                             int drainToNum = getInstance().callBackQueue.drainTo(callbackParamList);

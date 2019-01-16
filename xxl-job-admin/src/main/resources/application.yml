@@ -1,0 +1,70 @@
+spring:
+  freemarker:
+    settings:
+      number_format: 0.##########
+    charset: UTF-8
+    request-context-attribute: request
+    templateLoaderPath: classpath:/templates/
+    suffix: .ftl
+  mail:
+    password: xxx
+    port: 25
+    host: smtp.qq.com
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+    username: xxx@qq.com
+  datasource:
+    password: 123456
+    tomcat:
+      test-on-borrow: true
+      max-active: 30
+      max-wait: 10000
+    type: org.apache.tomcat.jdbc.pool.DataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://10.20.88.89:3306/db_xxl_job?Unicode=true&characterEncoding=UTF-8
+    username: root
+  resources:
+    static-locations: classpath:/static/
+  mvc:
+    static-path-pattern: /static/**
+  # dubbo
+  dubbo:
+    registry:
+      id: zkserver
+      protocol: zookeeper
+      address: 10.20.88.191
+      port: 2181
+    application:
+      name: xxl-job-admin
+    base-package: com.xxl.job.admin.service.impl
+    protocol:
+      id: dubbo
+      name: dubbo
+      serialization: hessian2
+      port: 43601
+    provider:
+      retries: -1
+      accesslog: false
+      token: true
+      registry: zkserver
+      protocol: dubbo-jvm
+      timeout: 20000
+    consumer:
+      check: false
+server:
+  context-path: /xxl-job-admin
+  port: 8080
+mybatis:
+  mapper-locations: classpath:/mybatis-mapper/*Mapper.xml
+xxl:
+  job:
+    login:
+      password: 123456
+      username: admin
+    accessToken:
+    i18n:

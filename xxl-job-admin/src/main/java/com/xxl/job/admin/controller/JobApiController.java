@@ -27,7 +27,7 @@ public class JobApiController implements InitializingBean {
     @RequestMapping(AdminBiz.MAPPING)
     @PermessionLimit(limit=false)
     public void api(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        XxlJobDynamicScheduler.invokeAdminService(request, response);
+//        XxlJobDynamicScheduler.invokeAdminService(request, response);
     }
 
 

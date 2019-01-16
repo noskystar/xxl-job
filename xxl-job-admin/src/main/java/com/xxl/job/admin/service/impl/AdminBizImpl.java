@@ -1,5 +1,6 @@
 package com.xxl.job.admin.service.impl;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
@@ -16,7 +17,6 @@ import com.xxl.job.core.handler.IJobHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.MessageFormat;

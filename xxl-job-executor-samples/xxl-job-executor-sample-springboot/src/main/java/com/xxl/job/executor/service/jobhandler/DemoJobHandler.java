@@ -1,6 +1,8 @@
 package com.xxl.job.executor.service.jobhandler;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobDubboHandler;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
@@ -21,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  * @author xuxueli 2015-12-19 19:43:36
  */
 @JobHandler(value="demoJobHandler")
-@Component
-public class DemoJobHandler extends IJobHandler {
+@Service(group = "demoJobHandler")
+public class DemoJobHandler extends IJobHandler implements IJobDubboHandler {
 
 	@Override
 	public ReturnT<String> execute(String param) throws Exception {
@@ -30,7 +32,7 @@ public class DemoJobHandler extends IJobHandler {
 
 		for (int i = 0; i < 5; i++) {
 			XxlJobLogger.log("beat at:" + i);
-			TimeUnit.SECONDS.sleep(2);
+			TimeUnit.SECONDS.sleep(1);
 		}
 		return SUCCESS;
 	}

@@ -1,11 +1,12 @@
 package com.xxl.job.executor.service.jobhandler;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobDubboHandler;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
 import com.xxl.job.core.util.ShardingUtil;
-import org.springframework.stereotype.Service;
 
 /**
  * 分片广播任务
@@ -13,8 +14,8 @@ import org.springframework.stereotype.Service;
  * @author xuxueli 2017-07-25 20:56:50
  */
 @JobHandler(value="shardingJobHandler")
-@Service
-public class ShardingJobHandler extends IJobHandler {
+@Service(group = "shardingJobHandler")
+public class ShardingJobHandler extends IJobHandler implements IJobDubboHandler {
 
 	@Override
 	public ReturnT<String> execute(String param) throws Exception {

@@ -1,5 +1,6 @@
 package com.xxl.job.admin.core.schedule;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.jobbean.RemoteHttpJobBean;
 import com.xxl.job.admin.core.model.XxlJobInfo;
@@ -10,21 +11,23 @@ import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
-import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
-import com.xxl.rpc.remoting.invoker.call.CallType;
-import com.xxl.rpc.remoting.invoker.reference.XxlRpcReferenceBean;
-import com.xxl.rpc.remoting.net.NetEnum;
-import com.xxl.rpc.remoting.net.impl.jetty.server.JettyServerHandler;
-import com.xxl.rpc.remoting.provider.XxlRpcProviderFactory;
-import com.xxl.rpc.serialize.Serializer;
-import org.eclipse.jetty.server.Request;
+//import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
+//import com.xxl.rpc.remoting.invoker.call.CallType;
+//import com.xxl.rpc.remoting.invoker.reference.XxlRpcReferenceBean;
+//import com.xxl.rpc.remoting.net.NetEnum;
+//import com.xxl.rpc.remoting.net.impl.jetty.server.JettyServerHandler;
+//import com.xxl.rpc.remoting.provider.XxlRpcProviderFactory;
+//import com.xxl.rpc.serialize.Serializer;
+//import org.eclipse.jetty.server.Request;
 import org.quartz.*;
 import org.quartz.Trigger.TriggerState;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +66,7 @@ public final class XxlJobDynamicScheduler {
         JobFailMonitorHelper.getInstance().start();
 
         // admin-server
-        initRpcProvider();
+//        initRpcProvider();
 
         logger.info(">>>>>>>>> init xxl-job admin success.");
     }
@@ -80,7 +83,7 @@ public final class XxlJobDynamicScheduler {
         JobFailMonitorHelper.getInstance().toStop();
 
         // admin-server
-        stopRpcProvider();
+//        stopRpcProvider();
     }
 
 
@@ -94,28 +97,37 @@ public final class XxlJobDynamicScheduler {
 
 
     // ---------------------- admin rpc provider (no server version) ----------------------
-    private static JettyServerHandler jettyServerHandler;
-    private void initRpcProvider(){
-        // init
-        XxlRpcProviderFactory xxlRpcProviderFactory = new XxlRpcProviderFactory();
-        xxlRpcProviderFactory.initConfig(NetEnum.JETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, 0, XxlJobAdminConfig.getAdminConfig().getAccessToken(), null, null);
-
-        // add services
-        xxlRpcProviderFactory.addService(AdminBiz.class.getName(), null, XxlJobAdminConfig.getAdminConfig().getAdminBiz());
-
-        // jetty handler
-        jettyServerHandler = new JettyServerHandler(xxlRpcProviderFactory);
-    }
-    private void stopRpcProvider() throws Exception {
-        new XxlRpcInvokerFactory().stop();
-    }
-    public static void invokeAdminService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        jettyServerHandler.handle(null, new Request(null, null), request, response);
-    }
+    // 使用dubbo 无需这部分处理
+//    private static JettyServerHandler jettyServerHandler;
+//    private void initRpcProvider(){
+//        // init
+//        XxlRpcProviderFactory xxlRpcProviderFactory = new XxlRpcProviderFactory();
+//        xxlRpcProviderFactory.initConfig(NetEnum.JETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), null, 0, XxlJobAdminConfig.getAdminConfig().getAccessToken(), null, null);
+//
+//        // add services
+//        xxlRpcProviderFactory.addService(AdminBiz.class.getName(), null, XxlJobAdminConfig.getAdminConfig().getAdminBiz());
+//
+//        // jetty handler
+//        jettyServerHandler = new JettyServerHandler(xxlRpcProviderFactory);
+//    }
+//    private void stopRpcProvider() throws Exception {
+//        new XxlRpcInvokerFactory().stop();
+//    }
+//    public static void invokeAdminService(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+//        jettyServerHandler.handle(null, new Request(null, null), request, response);
+//    }
 
 
     // ---------------------- executor-client ----------------------
     private static ConcurrentHashMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<String, ExecutorBiz>();
+    private static ExecutorBiz currentExecutorBiz;
+
+    @Reference
+    private ExecutorBiz executorBiz;
+    @PostConstruct
+    public void beforeInit() {
+        currentExecutorBiz = executorBiz;
+    }
     public static ExecutorBiz getExecutorBiz(String address) throws Exception {
         // valid
         if (address==null || address.trim().length()==0) {
@@ -130,8 +142,7 @@ public final class XxlJobDynamicScheduler {
         }
 
         // set-cache
-        executorBiz = (ExecutorBiz) new XxlRpcReferenceBean(NetEnum.JETTY, Serializer.SerializeEnum.HESSIAN.getSerializer(), CallType.SYNC,
-                ExecutorBiz.class, null, 10000, address, XxlJobAdminConfig.getAdminConfig().getAccessToken(), null).getObject();
+        executorBiz = currentExecutorBiz;
 
         executorBizRepository.put(address, executorBiz);
         return executorBiz;
