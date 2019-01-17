@@ -29,8 +29,8 @@ public class XxlJobConfig {
 //    @Value("${xxl.job.executor.ip}")
 //    private String ip;
 //
-//    @Value("${xxl.job.executor.port}")
-//    private int port;
+    @Value("${spring.dubbo.protocol.port}")
+    private int port;
 //
 //    @Value("${xxl.job.accessToken}")
 //    private String accessToken;
@@ -49,7 +49,7 @@ public class XxlJobConfig {
 //        xxlJobSpringExecutor.setAdminAddresses(adminAddresses);
         xxlJobSpringExecutor.setAppName(appName);
 //        xxlJobSpringExecutor.setIp(ip);
-//        xxlJobSpringExecutor.setPort(port);
+        xxlJobSpringExecutor.setPort(port);
 //        xxlJobSpringExecutor.setAccessToken(accessToken);
         xxlJobSpringExecutor.setLogPath(logPath);
         xxlJobSpringExecutor.setLogRetentionDays(logRetentionDays);

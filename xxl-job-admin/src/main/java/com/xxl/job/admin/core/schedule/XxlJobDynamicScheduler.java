@@ -1,14 +1,13 @@
 package com.xxl.job.admin.core.schedule;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
+import com.alibaba.dubbo.config.RegistryConfig;
+import com.xxl.job.admin.core.dubbo.HandlerReference;
 import com.xxl.job.admin.core.jobbean.RemoteHttpJobBean;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.thread.JobFailMonitorHelper;
 import com.xxl.job.admin.core.thread.JobRegistryMonitorHelper;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 //import com.xxl.rpc.remoting.invoker.XxlRpcInvokerFactory;
@@ -28,10 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -120,14 +115,17 @@ public final class XxlJobDynamicScheduler {
 
     // ---------------------- executor-client ----------------------
     private static ConcurrentHashMap<String, ExecutorBiz> executorBizRepository = new ConcurrentHashMap<String, ExecutorBiz>();
-    private static ExecutorBiz currentExecutorBiz;
 
-    @Reference
-    private ExecutorBiz executorBiz;
+    private static RegistryConfig registryConfig;
+
+    @Autowired
+    private RegistryConfig handlerRegistryConfig;
+
     @PostConstruct
     public void beforeInit() {
-        currentExecutorBiz = executorBiz;
+        registryConfig = handlerRegistryConfig;
     }
+
     public static ExecutorBiz getExecutorBiz(String address) throws Exception {
         // valid
         if (address==null || address.trim().length()==0) {
@@ -142,9 +140,17 @@ public final class XxlJobDynamicScheduler {
         }
 
         // set-cache
-        executorBiz = currentExecutorBiz;
+        String[] addrArray = address.split("#");
+        if (addrArray.length != 3) {
+            throw new RuntimeException("address is not right!");
+        }
+        String group = addrArray[0];
+        String ip = addrArray[1];
+        String port = addrArray[2];
 
+        executorBiz = new HandlerReference(group, ip, port, registryConfig);
         executorBizRepository.put(address, executorBiz);
+
         return executorBiz;
     }
 

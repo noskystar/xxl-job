@@ -37,7 +37,7 @@ public class XxlJobExecutor  {
 //    private String adminAddresses;
     private String appName;
 //    private String ip;
-//    private int port;
+    private int port;
 //    private String accessToken;
     private String logPath;
     private int logRetentionDays;
@@ -51,9 +51,9 @@ public class XxlJobExecutor  {
 //    public void setIp(String ip) {
 //        this.ip = ip;
 //    }
-//    public void setPort(int port) {
-//        this.port = port;
-//    }
+    public void setPort(int port) {
+        this.port = port;
+    }
 //    public void setAccessToken(String accessToken) {
 //        this.accessToken = accessToken;
 //    }
@@ -88,7 +88,7 @@ public class XxlJobExecutor  {
 //        port = port>0?port: NetUtil.findAvailablePort(9999);
 //        ip = (ip!=null&&ip.trim().length()>0)?ip: IpUtil.getIp();
 //        initRpcProvider(ip, port, appName, accessToken);
-        String dubboAddress = NetUtils.getLocalAddress().getHostAddress();
+        String dubboAddress = appName + "#" + NetUtils.getLocalAddress().getHostAddress() + "#" + port;
         ExecutorRegistryThread.getInstance().start(appName, dubboAddress);
     }
     public void destroy(){

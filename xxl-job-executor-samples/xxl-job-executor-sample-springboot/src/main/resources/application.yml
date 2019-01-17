@@ -22,7 +22,7 @@ spring:
       port: 2181
     application:
       name: xxl-job-executor
-    base-package: com.xxl.job.executor.service.jobhandler,com.xxl.job.core.biz.impl
+    base-package: com.xxl.job.executor.impl
     protocol:
       id: dubbo
       name: dubbo

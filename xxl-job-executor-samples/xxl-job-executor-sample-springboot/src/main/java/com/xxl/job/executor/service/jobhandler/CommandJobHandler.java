@@ -1,8 +1,6 @@
 package com.xxl.job.executor.service.jobhandler;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.xxl.job.core.biz.model.ReturnT;
-import com.xxl.job.core.handler.IJobDubboHandler;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import com.xxl.job.core.log.XxlJobLogger;
@@ -18,8 +16,8 @@ import java.io.InputStreamReader;
  * @author xuxueli 2018-09-16 03:48:34
  */
 @JobHandler(value="commandJobHandler")
-@Service(group = "commandJobHandler")
-public class CommandJobHandler extends IJobHandler implements IJobDubboHandler {
+@Component
+public class CommandJobHandler extends IJobHandler {
 
     @Override
     public ReturnT<String> execute(String param) throws Exception {

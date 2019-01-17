@@ -17,6 +17,7 @@
 		<commons-lang3.version>3.8.1</commons-lang3.version>
 		<groovy-all.version>2.5.3</groovy-all.version>
 		<quartz.version>2.3.0</quartz.version>
+		<spring-boot.version>1.5.7.RELEASE</spring-boot.version>
 	</properties>
 
 
